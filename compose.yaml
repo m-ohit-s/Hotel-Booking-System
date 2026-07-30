@@ -1,0 +1,30 @@
+services:
+  postgres:
+    container_name: airbnb_db
+    image: postgres:latest
+
+    environment:
+      POSTGRES_DB: airbnb_db
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - airbnb_data:/var/lib/postgresql
+
+  stripe_cli:
+    container_name: airbnb_stripe_cli
+    image: stripe/stripe-cli:latest
+    restart: unless-stopped
+
+    command:
+      - listen
+      - --api-key
+      - ${STRIPE_SECRET_KEY}
+      - --forward-to
+      - host.docker.internal:8080/webhook
+
+volumes:
+  airbnb_data:

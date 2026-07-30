@@ -1,0 +1,32 @@
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+server:
+  servlet:
+    context-path: /api/v1
+
+jwt:
+  secretKey: ${JWT_SECRET}
+
+frontend:
+  payment-success-url: http://localhost:8080/frontend/success
+  payment-failure-url: http://localhost:8080/frontend/failure
+
+stripe:
+  secret-key: ${STRIPE_SECRET_KEY}
+  webhook-secret: ${STRIPE_WEBHOOK_SECRET_KEY}
+
+# http://localhost:8080/api/v1/swagger-ui/index.html
