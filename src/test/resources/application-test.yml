@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/airbnb_db
+    username: postgres
+    password: postgres
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+jwt:
+  secretKey: test-secret
+
+stripe:
+  secret-key: test
+  webhook-secret: test
