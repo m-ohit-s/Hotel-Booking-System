@@ -1,7 +1,23 @@
 services:
+  app:
+    build: .
+    container_name: hotel-booking-app
+
+    ports:
+      - "8080:8080"
+
+    env_file:
+      - .env
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    restart: unless-stopped
+
   postgres:
+    image: postgres:17
     container_name: airbnb_db
-    image: postgres:latest
 
     environment:
       POSTGRES_DB: airbnb_db
@@ -12,19 +28,31 @@ services:
       - "5432:5432"
 
     volumes:
-      - airbnb_data:/var/lib/postgresql
+      - airbnb_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d airbnb_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    restart: unless-stopped
 
   stripe_cli:
-    container_name: airbnb_stripe_cli
     image: stripe/stripe-cli:latest
+    container_name: airbnb_stripe_cli
+
     restart: unless-stopped
+
+    depends_on:
+      - app
 
     command:
       - listen
       - --api-key
       - ${STRIPE_SECRET_KEY}
       - --forward-to
-      - host.docker.internal:8080/webhook
+      - http://host.docker.internal:8080/api/v1/webhook/payment
 
 volumes:
   airbnb_data:
